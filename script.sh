@@ -73,19 +73,15 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Build the Laravel Sail command
-SAIL_CMD="laravel new $PROJECT_NAME --no-interaction"
-if $DEVCONTAINER; then
-  SAIL_CMD="$SAIL_CMD --devcontainer"
-fi
-
 # Run the Laravel Sail command
+SAIL_CMD="laravel new $PROJECT_NAME --no-interaction"
 docker run --rm \
     --pull=always \
     -v "$(pwd)":/opt \
     -w /opt \
     laravelsail/php83-composer:latest \
-    bash -c "$SAIL_CMD && cd $PROJECT_NAME && php ./artisan sail:install --with=$SERVICES"
+    bash -c "$SAIL_CMD && cd $PROJECT_NAME && php ./artisan sail:install --with=$SERVICES $( [ $DEVCONTAINER = true ] && echo '--devcontainer' )"
+
 
 cd $PROJECT_NAME
 
