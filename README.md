@@ -18,6 +18,10 @@ To create a Laravel project named my-app with mysql and redis, and enable the de
 ```bash
 curl -s https://raw.githubusercontent.com/dibonjohnseron/laravel-build/main/script.sh | bash -s my-app --with mysql,redis --devcontainer
 ```
+To create a Laravel project named my-app with mysql and redis, and php version 8.2:
+```bash
+curl -s https://raw.githubusercontent.com/dibonjohnseron/laravel-build/main/script.sh | bash -s my-app --with mysql,redis --php-version 8.2
+```
 
 ## Notes
 - Ensure Docker is installed and running before executing the script.
