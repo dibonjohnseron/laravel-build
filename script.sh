@@ -6,7 +6,7 @@ DEVCONTAINER=false
 PHP_VERSION="8.3"  # Default PHP version
 
 # Allowed services
-ALLOWED_SERVICES="mysql pgsql mariadb redis memcached meilisearch typesense minio selenium mailpit"
+ALLOWED_SERVICES="mysql pgsql mariadb redis memcached meilisearch typesense minio selenium mailpit phpmyadmin"
 # Allowed PHP versions
 ALLOWED_PHP_VERSIONS=("8.0" "8.1" "8.2" "8.3")
 # phpMyAdmin service configuration
