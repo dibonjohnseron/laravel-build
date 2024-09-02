@@ -103,7 +103,17 @@ docker run --rm \
     "laravelsail/php${PHP_VERSION//./}-composer:latest" \
     bash -c "$SAIL_CMD && cd $PROJECT_NAME && php ./artisan sail:install --with=$SERVICES $( [ $DEVCONTAINER = true ] && echo '--devcontainer' )"
 
-cd $PROJECT_NAME
+# Change directory to the project directory
+cd "$PROJECT_NAME" || exit
+
+# Modify the docker-compose.yml file if a PHP version is specified
+if [[ "$PHP_VERSION" ]]; then
+    sed -i -E "s|context: ./vendor/laravel/sail/runtimes/[0-9]+\.[0-9]+|context: ./vendor/laravel/sail/runtimes/${PHP_VERSION}|g" "docker-compose.yml"
+    sed -i -E "s|image: sail-[0-9]+\.[0-9]+/app|image: sail-${PHP_VERSION}/app|g" "docker-compose.yml"
+fi
+
+# Change back to the original directory
+cd - || exit
 
 # Pull services and build
 if [ "$SERVICES" == "none" ]; then
