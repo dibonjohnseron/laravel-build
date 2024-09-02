@@ -10,16 +10,7 @@ ALLOWED_SERVICES="mysql pgsql mariadb redis memcached meilisearch typesense mini
 # Allowed PHP versions
 ALLOWED_PHP_VERSIONS=("8.0" "8.1" "8.2" "8.3")
 # phpMyAdmin service configuration
-PHPMYADMIN_SERVICE="
-    phpmyadmin:
-        image: 'phpmyadmin:latest'
-        ports:
-            - 8080:80
-        networks:
-            - sail
-        environment:
-            - PMA_ARBITRARY=1
-"
+PHPMYADMIN_SERVICE="    phpmyadmin:\n        image: 'phpmyadmin:latest'\n        ports:\n            - 8080:80\n        networks:\n            - sail\n        environment:\n            - PMA_ARBITRARY=1"
 
 # Function to display usage
 usage() {
@@ -174,11 +165,23 @@ fi
 IFS=',' read -r -a service_array <<< "$SERVICES"
 for service in "${service_array[@]}"; do
     if [[ "$service" == "phpmyadmin" ]]; then
-        awk -v new_service="$PHPMYADMIN_SERVICE" '
-            /networks:/ {
-                print new_service
+        awk -v service="$PHPMYADMIN_SERVICE" '
+        {
+            # Store the line in an array
+            lines[NR] = $0
+            if ($0 ~ /^networks:/) {
+                last_network_line = NR - 1  # Record the line number of the last "networks:"
             }
-            { print }
+        }
+        END {
+            # Output all lines, inserting service before the last "networks:"
+            for (i = 1; i <= NR; i++) {
+                print lines[i]
+                if (i == last_network_line) {
+                    printf "%s", service  # Insert the phpmyadmin service before the last "networks:"
+                }
+            }
+        }
         ' "docker-compose.yml" > temp.yml && mv temp.yml "docker-compose.yml"
         break
     fi
