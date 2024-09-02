@@ -43,6 +43,25 @@ validate_services() {
   done
 }
 
+# Validate services
+modify_services() {
+    local services="$1"
+    local modified_services=""
+    
+    IFS=',' read -r -a service_array <<< "$services"
+    
+    for service in "${service_array[@]}"; do
+        if [[ "$service" != "phpmyadmin" ]]; then
+            modified_services+="$service,"
+        fi
+    done
+    
+    # Remove the trailing comma if there are any services left
+    modified_services=${modified_services%,}
+    
+    echo "$modified_services"
+}
+
 # Validate PHP version
 validate_php_version() {
   local version="$1"
@@ -112,7 +131,7 @@ docker run --rm \
     -v "$(pwd)":/opt \
     -w /opt \
     "laravelsail/php${PHP_VERSION//./}-composer:latest" \
-    bash -c "$SAIL_CMD && cd $PROJECT_NAME && php ./artisan sail:install --with=$SERVICES $( [ $DEVCONTAINER = true ] && echo '--devcontainer' )"
+    bash -c "$SAIL_CMD && cd $PROJECT_NAME && php ./artisan sail:install --with=$(modify_services "$SERVICES") $( [ $DEVCONTAINER = true ] && echo '--devcontainer' )"
 
 # Change directory to the project directory
 cd "$PROJECT_NAME" || exit
