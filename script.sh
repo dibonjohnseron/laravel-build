@@ -25,7 +25,7 @@ PHPMYADMIN_SERVICE="
 usage() {
   echo "Usage: $0 project-name [--with services] [--devcontainer] [--php-version version]"
   echo "  project-name       Project name (required, no spaces or symbols except hyphens)"
-  echo "  --with             Comma-separated list of services (optional, default: $SERVICES)"
+  echo "  --with             Comma-separated list of services (optional, default: mysql,redis,meilisearch,mailpit,selenium)"
   echo "  --devcontainer     Enable --devcontainer option (optional)"
   echo "  --php-version      Specify PHP version (optional, default: $PHP_VERSION)"
   exit 1
