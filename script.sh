@@ -9,6 +9,17 @@ PHP_VERSION="8.3"  # Default PHP version
 ALLOWED_SERVICES="mysql pgsql mariadb redis memcached meilisearch typesense minio selenium mailpit"
 # Allowed PHP versions
 ALLOWED_PHP_VERSIONS=("8.0" "8.1" "8.2" "8.3")
+# phpMyAdmin service configuration
+PHPMYADMIN_SERVICE="
+    phpmyadmin:
+        image: 'phpmyadmin:latest'
+        ports:
+            - 8080:80
+        networks:
+            - sail
+        environment:
+            - PMA_ARBITRARY=1
+"
 
 # Function to display usage
 usage() {
@@ -139,3 +150,12 @@ if [[ "$PHP_VERSION" ]]; then
     sed -i -E "s|context: ./vendor/laravel/sail/runtimes/[0-9]+\.[0-9]+|context: ./vendor/laravel/sail/runtimes/${PHP_VERSION}|g" "docker-compose.yml"
     sed -i -E "s|image: sail-[0-9]+\.[0-9]+/app|image: sail-${PHP_VERSION}/app|g" "docker-compose.yml"
 fi
+
+# Modify the docker-compose.yml file if phpmyadmin is in the list of services
+IFS=',' read -r -a service_array <<< "$SERVICES"
+for service in "${service_array[@]}"; do
+    if [[ "$service" == "phpmyadmin" ]]; then
+        sed -i "/^networks:/i $PHPMYADMIN_SERVICE" "docker-compose.yml"
+        break
+    fi
+done
