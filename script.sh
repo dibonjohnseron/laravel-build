@@ -140,7 +140,7 @@ cd "$PROJECT_NAME" || exit
 if [ "$SERVICES" == "none" ]; then
     ./vendor/bin/sail build
 else
-    ./vendor/bin/sail pull $(echo $SERVICES | tr ',' ' ')
+    ./vendor/bin/sail pull $(echo $(modify_services "$SERVICES") | tr ',' ' ')
     ./vendor/bin/sail build
 fi
 
@@ -174,7 +174,12 @@ fi
 IFS=',' read -r -a service_array <<< "$SERVICES"
 for service in "${service_array[@]}"; do
     if [[ "$service" == "phpmyadmin" ]]; then
-        sed -i "/^networks:/i $PHPMYADMIN_SERVICE" "docker-compose.yml"
+        awk -v new_service="$PHPMYADMIN_SERVICE" '
+            /networks:/ {
+                print new_service
+            }
+            { print }
+        ' "docker-compose.yml" > temp.yml && mv temp.yml "docker-compose.yml"
         break
     fi
 done
