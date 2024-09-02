@@ -3,16 +3,20 @@
 # Default values
 SERVICES="mysql,redis,meilisearch,mailpit,selenium"
 DEVCONTAINER=false
+PHP_VERSION="8.3"  # Default PHP version
 
 # Allowed services
 ALLOWED_SERVICES="mysql pgsql mariadb redis memcached meilisearch typesense minio selenium mailpit"
+# Allowed PHP versions
+ALLOWED_PHP_VERSIONS=("8.0" "8.1" "8.2" "8.3")
 
 # Function to display usage
 usage() {
-  echo "Usage: $0 project-name [--with services] [--devcontainer]"
+  echo "Usage: $0 project-name [--with services] [--devcontainer] [--php-version version]"
   echo "  project-name       Project name (required, no spaces or symbols except hyphens)"
   echo "  --with             Comma-separated list of services (optional, default: $SERVICES)"
   echo "  --devcontainer     Enable --devcontainer option (optional)"
+  echo "  --php-version      Specify PHP version (optional, default: $PHP_VERSION)"
   exit 1
 }
 
@@ -28,6 +32,18 @@ validate_services() {
   done
 }
 
+# Validate PHP version
+validate_php_version() {
+  local version="$1"
+  for allowed in "${ALLOWED_PHP_VERSIONS[@]}"; do
+    if [[ "$version" == "$allowed" ]]; then
+      return 0
+    fi
+  done
+  echo "Error: Invalid PHP version '$version'. Allowed versions are: ${ALLOWED_PHP_VERSIONS[*]}"
+  usage
+}
+
 # Parse options
 POSITIONAL=()
 while [[ $# -gt 0 ]]; do
@@ -40,6 +56,11 @@ while [[ $# -gt 0 ]]; do
     --devcontainer)
       DEVCONTAINER=true
       shift
+    ;;
+    --php-version)
+      PHP_VERSION="$2"
+      validate_php_version "$PHP_VERSION"
+      shift 2
     ;;
     -*|--*)
       echo "Unknown option $1"
@@ -79,9 +100,8 @@ docker run --rm \
     --pull=always \
     -v "$(pwd)":/opt \
     -w /opt \
-    laravelsail/php83-composer:latest \
+    "laravelsail/php${PHP_VERSION//./}-composer:latest" \
     bash -c "$SAIL_CMD && cd $PROJECT_NAME && php ./artisan sail:install --with=$SERVICES $( [ $DEVCONTAINER = true ] && echo '--devcontainer' )"
-
 
 cd $PROJECT_NAME
 
