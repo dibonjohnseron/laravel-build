@@ -11,7 +11,7 @@ A script for setting up a Laravel Sail application with Docker. This script simp
 
 ## Parameters
 - `project-name` (required): The name of the Laravel project. It should not contain spaces or symbols other than hyphens.
-- `--with services` (optional): Comma-separated list of services to include. Allowed services are: **mysql**, **pgsql**, **mariadb**, **redis**, **memcached**, **meilisearch**, **typesense**, **minio**, **selenium**, **mailpit**. Default includes **mysql**, **redis**, **meilisearch**, **mailpit**, **selenium**.
+- `--with services` (optional): Comma-separated list of services to include. Allowed services are: **mysql**, **pgsql**, **mariadb**, **redis**, **memcached**, **meilisearch**, **typesense**, **minio**, **selenium**, **mailpit**, **phpmyadmin**. Default includes **mysql**, **redis**, **meilisearch**, **mailpit**, **selenium**.
 - `--devcontainer` (optional): Enable the development container for a consistent development environment.
 - `--php-version` (optional): Specify PHP version. Supported PHP version runtimes are: **8.0**, **8.1**, **8.2**, **8.3**. Default PHP version is **8.3**.
 
