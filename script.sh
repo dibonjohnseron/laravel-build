@@ -10,7 +10,7 @@ ALLOWED_SERVICES="mysql pgsql mariadb redis memcached meilisearch typesense mini
 # Allowed PHP versions
 ALLOWED_PHP_VERSIONS=("8.0" "8.1" "8.2" "8.3")
 # phpMyAdmin service configuration
-PHPMYADMIN_SERVICE="    phpmyadmin:\n        image: 'phpmyadmin:latest'\n        ports:\n            - 8080:80\n        networks:\n            - sail\n        environment:\n            - PMA_ARBITRARY=1"
+PHPMYADMIN_SERVICE="    phpmyadmin:\n        image: 'phpmyadmin:latest'\n        ports:\n            - 8080:80\n        networks:\n            - sail\n        environment:\n            - PMA_ARBITRARY=1\n"
 
 # Function to display usage
 usage() {
